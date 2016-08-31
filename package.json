@@ -7,7 +7,7 @@
   "repository": "22sk/botapijs",
   "scripts": {
     "test": "./node_modules/.bin/mocha ./test",
-    "doc": "./node_modules/.bin/jsdoc --readme README.md -c doc/conf.json -r -d doc lib"
+    "doc": "./node_modules/.bin/jsdoc --readme README.md -c doc/conf.json -r -d docs lib"
   },
   "dependencies": {
     "async": "^2.0.0-rc.6",
