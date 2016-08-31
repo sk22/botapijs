@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: bot.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: bot.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const request = require('request');
+const url = require('url');
+const npmlog = require('npmlog');
+const parsers = require('./parsers');
+const async = require('async');
+const dummy = require('dummy-object');
+const Server = require('./server');
+const Processor = require('./processor');
+
+/**
+ * Communicates with the API and executes Handlers on incoming updates
+ */
+class Bot {
+
+  /**
+   * @param {object}      options
+   * @param {?String}     options.apiUrl   URL to the bot's API or null if any
+   *                                       request's url should be able to be
+   *                                       used
+   * @param {?Server}     [options.server] Server object, or null if no server
+   *                                       should be set (is set manually
+   *                                       (this.server), or by the Server
+   *                                       itself by passing the Bot object to
+   *                                       the Server's constructor). Leave
+   *                                       blank or pass undefined if the server
+   *                                       should be generated automatically.
+   * @param {string}      [options.route]  The default route: e.g. if url is
+   *                                       https://bot.com/hook?url=https://...
+   *                                       pass '/webhook'
+   * @param {Requirement} [options.parser] The default parser. Used to parse the
+   *                                       body from a HTTP request
+   * @param {?object}     [options.log]    Logger object containing npmlog's
+   *                                       methods. Pass null to disable. If
+   *                                       none is passed, npmlog will be used
+   */
+  constructor({ apiUrl, server, route, parser, log, verbose } = {}) {
+    this.setApiUrl(apiUrl);
+
+    // Set defaults
+    this.route = route || /.*/;
+    this.parser = parser || parsers.json;
+    this.verbose = typeof verbose === 'boolean' ? verbose : false;
+    if (log === null) {
+      this.log = dummy;
+    } else {
+      this.log = log || npmlog;
+    }
+
+    if (server === undefined) {
+      server = new Server(undefined, { log: this.log });
+    }
+
+    if (server !== null) this.setServer(server);
+
+    this.handlers = {};
+    this.logPrefix = 'bot';
+  }
+
+  /** @private */
+  setServer(server) {
+    this.server = server;
+    server.addBot(this);
+  }
+
+  /**
+   * Invokes the server's listen method
+   *
+   * @param {number} port Port to listen on
+   * @param {string} host Hostname for the server
+   *
+   * @see https://nodejs.org/api/http.html
+   */
+  listen(...args) {
+    this.server.listen(...args);
+  }
+
+  setApiUrl(value) {
+    if (value &amp;&amp; typeof value !== 'string') {
+      throw new Error('The passed API URL must be a string and not ' +
+        `${typeof value}. Probably you missed to set a environment variable?`);
+    }
+    // apiUrl might also be null, allowing the bot to use any given url
+    if (typeof value === 'string') {
+      const parsed = url.parse(value);
+      if (!parsed.host || !parsed.path) {
+        throw new Error('Given API URL is invalid!');
+      }
+      if (parsed.path[parsed.path.length - 1] !== '/') {
+        throw new Error("API URL must end with '/'");
+      }
+    }
+    this.apiUrl = value || null;
+  }
+
+  /**
+   * Handles the data received from the API
+   *
+   * @param {object}         data      The data supplied by the API
+   * @param {string}         passedUrl URL supplied by the API
+   * @param {string}         route     The request's route
+   * @param {ServerResponse} res       Response to be sent to the API
+   */
+  handle(data, passedUrl, route, res) {
+    if (this.verbose) {
+      this.log.info(this.logPrefix, `Handling route '${route}'`);
+    }
+
+    if (this.apiUrl &amp;&amp; passedUrl !== this.apiUrl) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      return res.end("API URL did not match with the bot's");
+    }
+
+    async.each(this.handlers, (handler, done) => {
+      // check if route can be used
+      if (this.checkRoute(route, handler.route || this.route)) {
+        new Processor({ data, bot: this, handler, apiUrl: passedUrl, route })
+          .handle((err) => {
+            if (process.env.TGBOT_VERBOSE) {
+              this.log.info(`${this.logPrefix} handler`,
+                `Handler '${handler.name}' ${err ? 'failed' : 'succeeded'}`);
+            }
+            done();
+          });
+      } else {
+        // call the callable if route is not usable
+        done();
+      }
+    }, (err) => {
+      if (err) this.log.error(err);
+      res.end();
+    });
+  }
+
+  /**
+   * Checks if current http request's route is usable by the handler
+   *
+   * @private
+   * @param {string}        current Current http request's route
+   * @param {string|RegExp} route   Handler's route or Bot's default route
+   */
+  checkRoute(current, route) {
+    if (route instanceof RegExp) {
+      return route.test(current);
+    }
+    return route === current;
+  }
+
+  /**
+   * Register handler
+   *
+   * @param {Handler} handler                Handler object
+   * @param {object}  [options]              options for registering
+   * @param {boolean} [options.forceReplace] Forces to replace Handler with same
+   *                                         name
+   */
+  register(handler, options = {}) {
+    this.log.info(this.logPrefix, `Registering handler '${handler.name}'`);
+    if (options.forceReplace // force to proceed the replace
+      || !this.handlers[handler.name] // or handler does not yet exist
+      || this.handlers[handler.name].replaceable) { // or marked as replaceable
+      // add an object with the key [handler.name] to the handlers object
+      this.handlers[handler.name] = handler;
+    } else {
+      throw new Error(`The Handler ${handler.name} does already exist, ` +
+        'is not marked as replaceable and the forceReplace option was not set');
+    }
+  }
+
+  /**
+   * Callback containing the API's response data
+   *
+   * @callback Bot~response
+   * @param {object} error
+   * @param {object} response
+   * @param {String} body
+   */
+
+  /**
+   * Sends an update to the API
+   *
+   * @param {string}       method           Is appended to the API's URL
+   * @param {object}       update           The update object that should be
+   *                                        sent
+   * @param {Bot~response} callback         Callback containing error, response
+   *                                        and body
+   * @param {object}       [options]        Options object
+   * @param {boolean}      [options.silent] Will not log the response if true
+   * @param {string}       [options.apiUrl] Custom API URL
+   */
+  send(method, update, callback, { apiUrl, silent } = {}) {
+    request({
+      url: (apiUrl || this.apiUrl) + method,
+      method: 'POST',
+      json: update
+    }, (err, res, body) => {
+      if (!silent) this.log.http(this.logPrefix, 'Response', body);
+      if (callback) callback(err, res, body);
+    });
+  }
+}
+
+
+module.exports = Bot;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a></li><li><a href="module-requires.html">requires</a></li></ul><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a></li><li><a href="Callable.html">Callable</a></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Aug 31 2016 19:39:00 GMT+0200 (W. Europe Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

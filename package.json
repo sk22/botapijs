@@ -1,0 +1,34 @@
+{
+  "name": "bot22api",
+  "version": "0.0.1",
+  "author": "Samuel Kaiser",
+  "description": "Framework for Bot APIs",
+  "license": "MIT",
+  "repository": "22sk/botapijs",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha ./test",
+    "doc": "./node_modules/.bin/jsdoc --readme README.md -c doc/conf.json -r -d doc lib"
+  },
+  "dependencies": {
+    "async": "^2.0.0-rc.6",
+    "body": "^5.1.0",
+    "camelcase": "^3.0.0",
+    "deep-freeze": "0.0.1",
+    "dummy-object": "^1.0.0",
+    "npmlog": "^3.1.2",
+    "request": "^2.73.0",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^2.9.0",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.12.0",
+    "eslint-plugin-jsx-a11y": "^1.2.0",
+    "eslint-plugin-react": "^5.0.1",
+    "jsdoc": "^3.4.0",
+    "mocha": "^3.0.2",
+    "mockery": "^1.7.0",
+    "request": "^2.74.0"
+  }
+}
