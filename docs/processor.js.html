@@ -2,22 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: processor.js</title>
+    <title>processor.js - Documentation</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
 </head>
-
 <body>
 
-<div id="main">
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
 
-    <h1 class="page-title">Source: processor.js</h1>
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a><ul class='methods'><li data-type='method'><a href="Bot.html#handle">handle</a></li><li data-type='method'><a href="Bot.html#listen">listen</a></li><li data-type='method'><a href="Bot.html#register">register</a></li><li data-type='method'><a href="Bot.html#send">send</a></li></ul></li><li><a href="Callable.html">Callable</a><ul class='methods'><li data-type='method'><a href="Callable.html#prepareRequirements">prepareRequirements</a></li></ul></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a><ul class='methods'><li data-type='method'><a href="Processor.html#handle">handle</a></li><li data-type='method'><a href="Processor.html#send">send</a></li></ul></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a><ul class='methods'><li data-type='method'><a href="Server.html#addBot">addBot</a></li><li data-type='method'><a href="Server.html#listen">listen</a></li><li data-type='method'><a href="Server.html#request">request</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a><ul class='methods'><li data-type='method'><a href="module-parsers.html#.json">json</a></li></ul></li><li><a href="module-requires.html">requires</a><ul class='methods'><li data-type='method'><a href="module-requires.html#.has">has</a></li><li data-type='method'><a href="module-requires.html#.is">is</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">processor.js</h1>
+    
 
     
 
@@ -35,11 +47,12 @@ const deepFreeze = require('deep-freeze');
  * Handlers and Requirements as the second parameter in their
  * {@link Callable~callable}
  *
- * @property {object}  data    Data to handle
- * @property {Bot}     bot     Bot that invoked the handling
- * @property {Handler} handler Handler, containing its options, etc
- * @property {string}  apiUrl  Request's passed API URL
- * @property {string}  route   Request's route
+ * @property {object}  data      Data to handle
+ * @property {Bot}     bot       Bot that invoked the handling
+ * @property {Handler} handler   Handler, containing its options, etc
+ * @property {string}  apiUrl    Request's passed API URL
+ * @property {string}  route     Request's route
+ * @property {this}    processor The processor itself, for use when destructing
  */
 class Processor {
   constructor(object) {
@@ -51,29 +64,31 @@ class Processor {
    *
    * #### `this`
    *
-   * A problem you might be facing is when calling send through the callable,
-   * `this` might not be bound to the {@link Processor} properly.
-   *
    * ```
    * // wrong
    * (done, { send }) => {
-   *   send('sendMessage', { text: "doesn't work!" });
+   *   send('message', { text: "doesn't work!" });
    * }
    * ```
    *
    * The reason this given example doesn't work is that send is called from out
    * of the Processor object. Since the send method uses the Bot stored in the
-   * Processor (which is normally located at `this`), an ReferenceError is
+   * Processor (which is normally located at `this`), a ReferenceError is
    * thrown.
    *
    * The following way, send is executed from within the processor object.
    * ```
    * // fix: call from the processor
    * (done, processor) => {
-   *   processor.send('sendMessage', { text: 'works!' });
+   *   processor.send('message', { text: 'works!' });
    * }
    * ```
-   *
+   * ```
+   * // fix: make use of that the processor object contains itself
+   * (done, { data, processor }) => {
+   *   processor.send('message', data.text)
+   * }
+   * ```
    * As stated in {@link Callable~callable}, when a normal function is used as
    * the callable instead of an arrow function, `this` is bound to the
    * Processor object, so that can also be used.
@@ -103,7 +118,7 @@ class Processor {
       if (err instanceof ReferenceError) {
         throw new ReferenceError("The Bot's send method could not be called." +
         "Probably you didn't bind the Processor to the send method " +
-        'properly. See the JSDoc for the Processor#send for further' +
+        'properly. See the JSDoc for Processor#send for further' +
         'information.');
       } else {
         console.error(err);
@@ -141,12 +156,12 @@ class Processor {
             (err ? 'failed' : 'succeeded'));
         }
         reqDone(err);
-      }, this);
+      }, this, this);
     }, (err) => {
       // gets called on done(true) or if all requirements are done
       // if any requirement did not pass, do not execute handler callback
       // else the handler itself gets finally called
-      if (!err) this.handler.callable.call(this, callback, this);
+      if (!err) this.handler.callable.call(this, callback, this, this);
       // call callback directly if one of requirements failed
       else callback(true);
     });
@@ -163,17 +178,13 @@ module.exports = Processor;
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a></li><li><a href="module-requires.html">requires</a></li></ul><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a></li><li><a href="Callable.html">Callable</a></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a></li></ul>
-</nav>
-
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Aug 31 2016 19:39:00 GMT+0200 (W. Europe Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Sep 01 2016 03:00:58 GMT+0200 (W. Europe Daylight Time) using the Minami theme.
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
 </body>
 </html>

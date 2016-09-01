@@ -7,7 +7,7 @@
   "repository": "22sk/botapijs",
   "scripts": {
     "test": "./node_modules/.bin/mocha ./test",
-    "doc": "./node_modules/.bin/jsdoc --readme README.md -c doc/conf.json -r -d docs lib"
+    "doc": "./node_modules/.bin/jsdoc --readme README.md -c .jsdoc.json -r -d docs lib"
   },
   "dependencies": {
     "async": "^2.0.0-rc.6",
@@ -27,6 +27,7 @@
     "eslint-plugin-jsx-a11y": "^1.2.0",
     "eslint-plugin-react": "^5.0.1",
     "jsdoc": "^3.4.0",
+    "minami": "^1.1.1",
     "mocha": "^3.0.2",
     "mockery": "^1.7.0",
     "request": "^2.74.0"

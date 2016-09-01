@@ -2,32 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>Home - Documentation</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
 </head>
-
 <body>
 
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a><ul class='methods'><li data-type='method'><a href="Bot.html#handle">handle</a></li><li data-type='method'><a href="Bot.html#listen">listen</a></li><li data-type='method'><a href="Bot.html#register">register</a></li><li data-type='method'><a href="Bot.html#send">send</a></li></ul></li><li><a href="Callable.html">Callable</a><ul class='methods'><li data-type='method'><a href="Callable.html#prepareRequirements">prepareRequirements</a></li></ul></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a><ul class='methods'><li data-type='method'><a href="Processor.html#handle">handle</a></li><li data-type='method'><a href="Processor.html#send">send</a></li></ul></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a><ul class='methods'><li data-type='method'><a href="Server.html#addBot">addBot</a></li><li data-type='method'><a href="Server.html#listen">listen</a></li><li data-type='method'><a href="Server.html#request">request</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a><ul class='methods'><li data-type='method'><a href="module-parsers.html#.json">json</a></li></ul></li><li><a href="module-requires.html">requires</a><ul class='methods'><li data-type='method'><a href="module-requires.html#.has">has</a></li><li data-type='method'><a href="module-requires.html#.is">is</a></li></ul></li></ul>
+</nav>
+
 <div id="main">
-
-    <h1 class="page-title">Home</h1>
+    
 
     
 
 
 
     
-
-
-    <h3> </h3>
-
 
 
 
@@ -40,14 +46,135 @@
     
 
 
+    <section class="readme">
+        <article><h1>Framework for Bot APIs</h1><p>built for the Telegram Bot API</p>
+<p><a href="https://www.npmjs.com/package/bot22api"><img src="https://img.shields.io/npm/v/bot22api.svg?style=flat-square" alt="npm"></a>
+<a href="https://www.npmjs.com/package/bot22api"><img src="https://img.shields.io/npm/l/bot22api.svg?style=flat-square" alt="npm"></a>
+<a href="https://www.npmjs.com/package/bot22api"><img src="https://img.shields.io/npm/dt/bot22api.svg?style=flat-square" alt="npm"></a>
+<a href="https://github.com/22sk/botapijs"><img src="https://img.shields.io/github/stars/22sk/botapijs.svg?style=social&amp;label=Star" alt="GitHub stars"></a></p>
+<p>Documentation: https://22sk.github.io/botapijs</p>
+<pre class="prettyprint source lang-javascript"><code>const bot22api = require('bot22api');
+const { Bot, Handler, Requirement } = bot22api;
+const { parsers, requires } = bot22api;
 
 
-    <section>
-        <article><h1>Node.js powered API for Telegram-like Bot APIs</h1><p><a href="https://www.npmjs.com/package/bot22core"><img src="https://img.shields.io/npm/v/bot22core.svg?style=flat-square" alt="npm"></a>
-<a href="https://www.npmjs.com/package/bot22core"><img src="https://img.shields.io/npm/l/bot22core.svg?style=flat-square" alt="npm"></a>
-<a href="https://www.npmjs.com/package/bot22core"><img src="https://img.shields.io/npm/dt/bot22core.svg?style=flat-square" alt="npm"></a>
-<a href="https://github.com/22sk/telegrambotjs"><img src="https://img.shields.io/github/stars/22sk/telegrambotjs.svg?style=social&amp;label=Star" alt="GitHub stars"></a></p>
-<pre class="prettyprint source lang-javascript"><code>// insert example here</code></pre><h2>Installation</h2><h2>The Theory</h2><h2>Getting started</h2></article>
+console.log(Bot);
+
+
+const bot = new Bot({
+  apiUrl: 'https://somebotapi.io/?token=t84lGDUhW0SZq5cj/',
+  parser: parsers.json
+});
+
+bot.register(new Handler('dbHandler', (done, { data }) => {
+  console.log(data);
+  done();
+}));
+
+bot.register(new Handler({
+  name: 'textHandler',
+  callable: function textHandler(done) {
+    this.send('message', {
+      user: this.data.user,
+      text: `Hello ${this.data.user}!`
+    });
+    done();
+  },
+  requires: [
+    requires.has('text'),
+    new Requirement('helloChecker', (done, processor) => {
+      if (processor.data.text === 'hello') done(); // no error
+      else done(true); // error
+    })
+  ]
+}));
+
+bot.listen(3000, 'localhost');</code></pre><h2>installation</h2><pre class="prettyprint source"><code>npm install bot22api</code></pre><h2>getting started</h2><p>First of all require all needed dependencies.</p>
+<pre class="prettyprint source lang-javascript"><code>const bot22api = require('bot22api');
+const { Bot, Handler } = bot22api;</code></pre><h3>Bot <sub><strong><a href="https://22sk.github.io/botapijs/Bot.html">/docs/</a></strong></sub></h3><p>To create a new bot, call its constructor.</p>
+<pre class="prettyprint source lang-javascript"><code>const bot = new Bot({
+  apiUrl: 'https://somebotapi.io/?token=t84lGDUhW0SZq5cj/',
+  route: /.*/,
+  parser: bot22api.parsers.json,
+  server: undefined, // will be created automatically
+  log: null // will send no logs if null. npmlog by default
+});</code></pre><p>Now that you have a Bot object, you need to register so-called Handlers using
+the Bot's register method. Each Callable (Handler or Requirement) must have a
+unique name.</p>
+<h4>Bot#register <sub><a href="https://22sk.github.io/botapijs/Bot.html#register">/docs/</a></sub></h4><pre class="prettyprint source lang-javascript"><code>bot.register(handler);</code></pre><h3>Handler <sub><a href="https://22sk.github.io/botapijs/Handler.html">/docs/</a></sub></h3><p>Each time the bot receives a HTTP request, it'll try to execute all handlers
+that is has. A Handler can also have Requirements, that do almost the same as
+Handlers, but they check if the data can be used by the Handler. If one
+Requirement fails, the Handler won't execute.</p>
+<pre class="prettyprint source lang-javascript"><code>bot.register(new Handler({
+  name: 'loggerHandler',
+  callable: (done, { data }) => {
+    console.log(data);
+    done();
+  }
+}));</code></pre><h3>Callable <sub><a href="https://22sk.github.io/botapijs/Handler.html">/docs/</a></sub></h3><p>All Callable-extending classes (Handler and Requirement) can also be constructed
+by passing the Callable name, the Callable function and optional Requirements.</p>
+<p>This is what all Callables have in common. Mind that requires is optional!</p>
+<pre class="prettyprint source"><code>Callable {
+  name: string,
+  callable: function,
+  [requires]: Requirement[]
+}</code></pre><p>Callables themselves can not be used in any way. Do always construct either
+Handlers or Requirements.</p>
+<p>By using a named function, you do not need to pass the name as a string, as the
+name is already given. See the documentation for further information about the
+construction of Callables.</p>
+<h4>Danger!</h4><p>You can't simply filter out the <code>send</code> method from the processor and call it!
+Since <code>send</code> accesses the bot through the processor, it needs to get properties
+of <code>this</code>, which does not exist after you extracted it from the processor.</p>
+<p>For workarounds, take a look at the documentation: <a href="https://22sk.github.io/botapijs/Processor.html#send">Processor#send</a></p>
+<h3>Requirement <sub><a href="https://22sk.github.io/botapijs/Requirement.html">/docs/</a></sub></h3><p>A Requirement constructs like any other Callable: Like a Handler.
+The only big difference to a Handler is when they are used.</p>
+<p>Requirements perform checks or modifications on the data that the handler relies
+on. Requirements can also depend on other Requirements.</p>
+<p>In any Callable, the requirements are represented in an Array named <code>requires</code>.
+For example, here's a Handler with some Requirements.</p>
+<pre class="prettyprint source lang-javascript"><code>const { Requirement, requires } = bot22api;</code></pre><pre class="prettyprint source lang-javascript"><code>new Handler({
+  name: 'requirementShowcaseHandler',
+  callable: (done) => {
+    console.log('All Requirements have passed.'); done();
+  },
+  requires: [
+    // checks if user.type === 'admin'
+    requires.is('admin', 'user', 'type'),
+    // using the (functionName, requires) constructor, see Callable doc
+    new Requirement(function textNotEmpty(done, { data }) {
+      if (typeof data.text === 'string' && data.text.length === 0) done();
+      else done(true); // error -> done(err)
+    }, [ requires.has('text') ])
+  ]
+});</code></pre><p>This results in a Requirements tree like:</p>
+<ul>
+<li>requirementShowcaseHandler<ul>
+<li>isUserTypeAdmin<ul>
+<li>hasUserType</li>
+</ul>
+</li>
+<li>textNotEmpty<ul>
+<li>hasText</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Processor <sub><a href="https://22sk.github.io/botapijs/Processor.html">/doc/</a></sub></h3><p>When a HTTP request invokes a bot, the bot creates a Processor for all Handlers.
+As the Handlers and Requirement so get embedded into an environment that
+contains all current states, properties like the passed API URL and route can
+be retrieved from that object.</p>
+<p>You can use the processor while inside a Callable function
+(Handler or Requirement)</p>
+<pre class="prettyprint source lang-javascript"><code>new Handler({
+  callable: (done, processor) => {
+    console.log('Cool?', processor.handler.options.beCool);
+    processor.send('message', `I received ${processor.data} ` +
+      `on route ${processor.route}`);
+  },
+  options: { beCool: true }
+});</code></pre><h2>license</h2><p><a href="LICENSE">MIT</a></p></article>
     </section>
 
 
@@ -57,17 +184,13 @@
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a></li><li><a href="module-requires.html">requires</a></li></ul><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a></li><li><a href="Callable.html">Callable</a></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a></li></ul>
-</nav>
-
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Aug 31 2016 19:39:00 GMT+0200 (W. Europe Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Sep 01 2016 03:00:58 GMT+0200 (W. Europe Daylight Time) using the Minami theme.
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-module.exports = exports = require('./lib/bot');
+exports = module.exports = require('./lib/bot');
 exports.Bot = require('./lib/bot');
 exports.Handler = require('./lib/handler');
 exports.Requirement = require('./lib/requirement');

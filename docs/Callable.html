@@ -2,22 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Callable</title>
+    <title>Callable - Documentation</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
 </head>
-
 <body>
 
-<div id="main">
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
 
-    <h1 class="page-title">Class: Callable</h1>
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a><ul class='methods'><li data-type='method'><a href="Bot.html#handle">handle</a></li><li data-type='method'><a href="Bot.html#listen">listen</a></li><li data-type='method'><a href="Bot.html#register">register</a></li><li data-type='method'><a href="Bot.html#send">send</a></li></ul></li><li><a href="Callable.html">Callable</a><ul class='methods'><li data-type='method'><a href="Callable.html#prepareRequirements">prepareRequirements</a></li></ul></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a><ul class='methods'><li data-type='method'><a href="Processor.html#handle">handle</a></li><li data-type='method'><a href="Processor.html#send">send</a></li></ul></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a><ul class='methods'><li data-type='method'><a href="Server.html#addBot">addBot</a></li><li data-type='method'><a href="Server.html#listen">listen</a></li><li data-type='method'><a href="Server.html#request">request</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a><ul class='methods'><li data-type='method'><a href="module-parsers.html#.json">json</a></li></ul></li><li><a href="module-requires.html">requires</a><ul class='methods'><li data-type='method'><a href="module-requires.html#.has">has</a></li><li data-type='method'><a href="module-requires.html#.is">is</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Callable</h1>
+    
 
     
 
@@ -28,7 +40,9 @@
 
 <header>
     
-        <h2>Callable</h2>
+        <h2>
+        Callable
+        </h2>
         
     
 </header>
@@ -359,7 +373,7 @@ new Callable(function testCallable(done, processor) {});</code></pre><h4><strong
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="callable.js.html">callable.js</a>, <a href="callable.js.html#line93">line 93</a>
+        <a href="callable.js.html">callable.js</a>, <a href="callable.js.html#line103">line 103</a>
     </li></ul></dd>
     
 
@@ -520,7 +534,7 @@ new Callable(function testCallable(done, processor) {});</code></pre><h4><strong
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="callable.js.html">callable.js</a>, <a href="callable.js.html#line128">line 128</a>
+        <a href="callable.js.html">callable.js</a>, <a href="callable.js.html#line138">line 138</a>
     </li></ul></dd>
     
 
@@ -581,15 +595,21 @@ using the ES6 destruction syntax:</p>
 <pre class="prettyprint source"><code>(done, { data, send }) => {
   // send() can not be used as is!
 }</code></pre><p>Regarding the <code>send</code> method, please read <a href="Processor.html#send">Processor#send</a>!</p>
-<p><strong>Binding the Processor to the function</strong></p>
+<p>To be able to destruct the processor to use relevant properties and have
+access to a working send method, you can use the processor's <code>processor</code>
+property:</p>
+<pre class="prettyprint source"><code>(done, { data, send, processor } => {
+  processor.send('message', data);
+})</code></pre><p><strong>Binding the Processor to the function</strong></p>
 <p>Using a function, the Processor is bound to the callable. That means,
 all properties of Processor can also be accessed through <code>this</code> inside
 of the callable function, so the processor parameter is optional.</p>
 <p>By adding a name to the function, you can leave out the parameter for the
 Callable name.</p>
 <pre class="prettyprint source"><code>// (namedFunction, requires)
-new Callable(function testCallable(done, processor) {
+new Callable(function testCallable(done, { data }) {
   this.data === processor.data;
+  this.send('message', data)
 });</code></pre>
 </div>
 
@@ -642,7 +662,7 @@ new Callable(function testCallable(done, processor) {
 
             
 
-            <td class="description last"><p>Should be called from the callable when done</p></td>
+            <td class="description last"><p>Must be called from the callable when done</p></td>
         </tr>
 
     
@@ -707,7 +727,7 @@ new Callable(function testCallable(done, processor) {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="callable.js.html">callable.js</a>, <a href="callable.js.html#line4">line 4</a>
+        <a href="callable.js.html">callable.js</a>, <a href="callable.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -757,17 +777,13 @@ new Callable(function testCallable(done, processor) {
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a></li><li><a href="module-requires.html">requires</a></li></ul><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a></li><li><a href="Callable.html">Callable</a></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a></li></ul>
-</nav>
-
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Aug 31 2016 19:39:00 GMT+0200 (W. Europe Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Sep 01 2016 03:00:58 GMT+0200 (W. Europe Daylight Time) using the Minami theme.
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
 </body>
 </html>

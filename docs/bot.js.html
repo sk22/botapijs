@@ -2,22 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: bot.js</title>
+    <title>bot.js - Documentation</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
     <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
 </head>
-
 <body>
 
-<div id="main">
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
 
-    <h1 class="page-title">Source: bot.js</h1>
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a><ul class='methods'><li data-type='method'><a href="Bot.html#handle">handle</a></li><li data-type='method'><a href="Bot.html#listen">listen</a></li><li data-type='method'><a href="Bot.html#register">register</a></li><li data-type='method'><a href="Bot.html#send">send</a></li></ul></li><li><a href="Callable.html">Callable</a><ul class='methods'><li data-type='method'><a href="Callable.html#prepareRequirements">prepareRequirements</a></li></ul></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a><ul class='methods'><li data-type='method'><a href="Processor.html#handle">handle</a></li><li data-type='method'><a href="Processor.html#send">send</a></li></ul></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a><ul class='methods'><li data-type='method'><a href="Server.html#addBot">addBot</a></li><li data-type='method'><a href="Server.html#listen">listen</a></li><li data-type='method'><a href="Server.html#request">request</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a><ul class='methods'><li data-type='method'><a href="module-parsers.html#.json">json</a></li></ul></li><li><a href="module-requires.html">requires</a><ul class='methods'><li data-type='method'><a href="module-requires.html#.has">has</a></li><li data-type='method'><a href="module-requires.html#.is">is</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">bot.js</h1>
+    
 
     
 
@@ -36,7 +48,7 @@ const Server = require('./server');
 const Processor = require('./processor');
 
 /**
- * Communicates with the API and executes Handlers on incoming updates
+ * Communicates with the API and executes Processors on incoming updates
  */
 class Bot {
 
@@ -46,17 +58,17 @@ class Bot {
    *                                       request's url should be able to be
    *                                       used
    * @param {?Server}     [options.server] Server object, or null if no server
-   *                                       should be set (is set manually
-   *                                       (this.server), or by the Server
-   *                                       itself by passing the Bot object to
-   *                                       the Server's constructor). Leave
-   *                                       blank or pass undefined if the server
-   *                                       should be generated automatically.
+   *                                       should be set. Leave blank or pass
+   *                                       undefined if the server should be
+   *                                       generated automatically.
    * @param {string}      [options.route]  The default route: e.g. if url is
    *                                       https://bot.com/hook?url=https://...
    *                                       pass '/webhook'
    * @param {Requirement} [options.parser] The default parser. Used to parse the
-   *                                       body from a HTTP request
+   *                                       body from a HTTP request. As long as
+   *                                       a Handler's parser option is not
+   *                                       null, this Requirement will be added
+   *                                       to all Handlers.
    * @param {?object}     [options.log]    Logger object containing npmlog's
    *                                       methods. Pass null to disable. If
    *                                       none is passed, npmlog will be used
@@ -102,10 +114,17 @@ class Bot {
     this.server.listen(...args);
   }
 
+  /**
+   * Verifys the value is valid and throws an error if it's not
+   *
+   * @private
+   * @param {string|RegExp|null}
+   */
   setApiUrl(value) {
+    // value is set, but not a string
     if (value &amp;&amp; typeof value !== 'string') {
-      throw new Error('The passed API URL must be a string and not ' +
-        `${typeof value}. Probably you missed to set a environment variable?`);
+      throw new Error('The passed API URL must be a string or RegExp or null ' +
+        `and not ${typeof value}.`);
     }
     // apiUrl might also be null, allowing the bot to use any given url
     if (typeof value === 'string') {
@@ -238,17 +257,13 @@ module.exports = Bot;
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-parsers.html">parsers</a></li><li><a href="module-requires.html">requires</a></li></ul><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a></li><li><a href="Callable.html">Callable</a></li><li><a href="Handler.html">Handler</a></li><li><a href="Processor.html">Processor</a></li><li><a href="Requirement.html">Requirement</a></li><li><a href="Server.html">Server</a></li></ul>
-</nav>
-
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Aug 31 2016 19:39:00 GMT+0200 (W. Europe Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Sep 01 2016 03:00:58 GMT+0200 (W. Europe Daylight Time) using the Minami theme.
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
 </body>
 </html>
