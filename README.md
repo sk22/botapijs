@@ -190,7 +190,25 @@ new Handler({
 });
 ```
 
+### Finalization
 
+Once everything is set up, you need to tell the bot's server to start listening.
+To do that, simply call the Bot's `listen` method. If your server runs more
+than one Bot, call the Server's `listen` method instead.
+
+```javascript
+bot.listen(3000, 'localhost');
+```
+
+Now to make HTTP requests, call your URL, which consists of your hostname,
+port, an optional route followed by `?url=` and the set API URL. The data is
+submit in the POST request's body.
+
+So just give the full URL to your bot API.
+
+```
+https://yourbot.rhcloud.com/yourRoute?url=https://somebotapi.io/?token=t84lGDUhW0SZq5cj/
+```
 
 ## license
 [MIT](LICENSE)
