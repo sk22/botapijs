@@ -215,7 +215,7 @@ https://yourbot.rhcloud.com/yourRoute?url=https://somebotapi.io/?token=t84lGDUhW
 [Bot#register]: https://22sk.github.io/botapijs/Bot.html#register
 [Server]: https://22sk.github.io/botapijs/Server.html
 [Handler]: https://22sk.github.io/botapijs/Handler.html
-[Callable]: https://22sk.github.io/botapijs/Handler.html
+[Callable]: https://22sk.github.io/botapijs/Callable.html
 [Requirement]: https://22sk.github.io/botapijs/Requirement.html
 [Processor#send]: https://22sk.github.io/botapijs/Processor.html#send
 [Processor]: https://22sk.github.io/botapijs/Processor.html
