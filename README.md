@@ -103,7 +103,7 @@ All Callable-extending classes (Handler and Requirement) can also be constructed
 by passing the Callable name, the Callable function and optional Requirements.
 
 This is what all Callables have in common. Mind that requires is optional!
-```
+```javascript
 Callable {
   name: string,
   callable: function,
