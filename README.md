@@ -1,5 +1,5 @@
 # Framework for Bot APIs
-built for the Telegram Bot API
+built for the Telegram Bot API (see [22sk/botapijs-telegram][botapijs-telegram])
 
 [![npm](https://img.shields.io/npm/v/bot22api.svg?style=flat-square)](https://www.npmjs.com/package/bot22api)
 [![npm](https://img.shields.io/npm/l/bot22api.svg?style=flat-square)](https://www.npmjs.com/package/bot22api)
@@ -12,10 +12,6 @@ Documentation: https://22sk.github.io/botapijs
 const bot22api = require('bot22api');
 const { Bot, Handler, Requirement } = bot22api;
 const { parsers, requires } = bot22api;
-
-
-console.log(Bot);
-
 
 const bot = new Bot({
   apiUrl: 'https://somebotapi.io/?token=t84lGDUhW0SZq5cj/',
@@ -214,6 +210,7 @@ https://yourbot.rhcloud.com/yourRoute?url=https://somebotapi.io/?token=t84lGDUhW
 [MIT](LICENSE)
 
 
+[botapijs-telegram]: https://github.com/22sk/botapijs-telegram
 [Bot]: https://22sk.github.io/botapijs/Bot.html
 [Bot#register]: https://22sk.github.io/botapijs/Bot.html#register
 [Server]: https://22sk.github.io/botapijs/Server.html
