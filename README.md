@@ -4,7 +4,7 @@ built for the Telegram Bot API
 [![npm](https://img.shields.io/npm/v/bot22api.svg?style=flat-square)](https://www.npmjs.com/package/bot22api)
 [![npm](https://img.shields.io/npm/l/bot22api.svg?style=flat-square)](https://www.npmjs.com/package/bot22api)
 [![npm](https://img.shields.io/npm/dt/bot22api.svg?style=flat-square)](https://www.npmjs.com/package/bot22api)
-[![GitHub stars](https://img.shields.io/github/stars/22sk/botapijs.svg?style=social&label=Star)](https://github.com/22sk/botapijs)
+[![GitHub stars](https://img.shields.io/github/stars/sk22/botapijs.svg?style=social&label=Star)](https://github.com/sk22/botapijs)
 
 Documentation: https://sk22.github.io/botapijs
 
