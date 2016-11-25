@@ -6,7 +6,7 @@ built for the Telegram Bot API
 [![npm](https://img.shields.io/npm/dt/bot22api.svg?style=flat-square)](https://www.npmjs.com/package/bot22api)
 [![GitHub stars](https://img.shields.io/github/stars/22sk/botapijs.svg?style=social&label=Star)](https://github.com/22sk/botapijs)
 
-Documentation: https://22sk.github.io/botapijs
+Documentation: https://sk22.github.io/botapijs
 
 ### Telegram
 
