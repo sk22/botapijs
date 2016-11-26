@@ -171,7 +171,7 @@ This results in a Requirements tree like:
    - hasText
 
 
-### Processor <sub>[/doc/][Processor]</sub>
+### Processor <sub>[/docs/][Processor]</sub>
 
 When a HTTP request invokes a bot, the bot creates a Processor for all Handlers.
 As the Handlers and Requirement so get embedded into an environment that
